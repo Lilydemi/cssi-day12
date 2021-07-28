@@ -1,20 +1,36 @@
-let googleUser;
+let googleUser; 
 
-window.onload = (event) => {
-  // Use this to retain user state between html pages.
-  firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-      console.log('Logged in as: ' + user.displayName);
-      googleUser = user;
-    } else {
-      window.location = 'index.html'; // If not logged in, navigate back to login page.
-    }
-  });
-};
+window.onload = () => {
+    //retain state between html pages 
+    firebase.auth().onAuthStateChanged(function (user){
+        if(user) {
+            console.log('Logged in as: ' + user.displayName); 
+            googleUser = user; 
+        } else {
+            window.location = 'index.html'; //if not logged in, go back to home page
+        }
+    }); 
+}
 
 const handleNoteSubmit = () => {
     console.log("note submission function called");
-    // 1. Capture the form data
-    // 2. Format the data and write it to our database
-    // 3. Clear the form so that we can write a new note
+    //capture form data
+    const titleElement = document.querySelector("#noteTitle");
+    const textElement = document.querySelector("#noteText");
+    //format data 
+    const note = {
+        title: titleElement.value,
+        text: textElement.value,
+    };
+    //clear form
+    //titleElement.value = "";
+    //textElement.value = ""; 
+     //write to database
+     console.log(note);
+    const dbRef = firebase.database().ref(`users/${googleUser.uid}`);
+    dbRef.push(note).then(() =>{
+        titleElement.value = ""; //clear form if action succedes 
+        textElement.value = ""; 
+    });
+
 }
